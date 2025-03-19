@@ -16,63 +16,137 @@ Web Player
 <img width="1239" alt="Screenshot 2025-03-18 at 1 49 01 PM" src="https://github.com/user-attachments/assets/4994ddc9-fb95-4468-b72d-5f5204154d12" />
 
 
-**Users** - Stores user details with a unique user_ID.
+**Users** – Stores user details
+Attributes:
+- Primary Key: userID
+- username
+- email
+- last_Name
+- first_Name
+- country
+- date_of_birth
+**Relationships**:
+- One-to-Many with PlayerSessions (each user can have multiple sessions).
+- One-to-Many with Playlists (each user can create multiple playlists).
 
-Relationships:
--  One-to-Many with MusicLibraries (each user can have many libraries).
--  One-to-Many with Playlists (each user can create multiple playlists).
--  One-to-Many with PlayerSessions (each user can have multiple listening sessions).
+**MusicLibrary** – Represents a user's music collection
+Attributes:
+- Primary Key: libraryID
+- Foreign Key: userID
+- songID
+- play_count
+- skip_count
+- date_added
+- last_played
+**Relationships**:
+- Many-to-One with Users (each user can have a music library).
+- Many-to-One with Songs (each library entry references a song).
 
+**Songs** – Contains song data
+Attributes:
+- Primary Key: songID
+- Foreign Key: artistID
+- Foreign Key: albumID
+- title
+- duration
+- release_date
+**Relationships**:
+- Many-to-One with Artist (each song has one artist).
+- Many-to-One with Album (each song belongs to one album).
+- Many-to-Many with Genres via SongGenres (each song can belong to multiple genres).
+- Many-to-Many with Playlists via PlaylistSongs (a song can be in multiple playlists).
+- One-to-Many with MusicLibrary (a song can be played multiple times).
 
-**MusicLibraries** - Represents a user's music collection.
+**Artist** – Contains information about each artist
+Attributes:
+- Primary Key: artistID
+- name
+- country
+- label
+- bio
+**Relationships**:
+- One-to-Many with Songs (an artist can have many songs).
+- Many-to-Many with Genres via ArtistGenres (an artist can be associated with multiple genres).
+- One-to-Many with Albums (an artist can have multiple albums).
 
-Relationships:
--  Many-to-Many with Songs via LibrarySongs (each library can contain multiple songs).
+**Album** – Stores information about albums
+Attributes:
+- Primary Key: albumID
+- Foreign Key: artistID
+- title
+- release_date
+- record_label
+- total_tracks
+- duration
+- album_type
+**Relationships**:
+- One-to-Many with Songs (each album contains multiple songs).
 
-**LibrarySongs** - Allows users to have multiple songs in their library while each song can belong to multiple libraries.
+**PlayerSessions** – Tracks user listening sessions
+Attributes:
+- Primary Key: sessionID
+- Foreign Key: userID
+- Foreign Key: songID
+- start_time
+- end_time
+**Relationships**:
+- Many-to-One with Users (each session belongs to one user).
+- Many-to-One with Songs (each session records a song being played).
 
-**Songs** - Contains song data
+**Playlists** – Represents user-created playlists
+Attributes:
+- Primary Key: playlistID
+- Foreign Key: userID
+- name
+- privacy_type
+- creation_date
+- like_count
+**Relationships**:
+- Many-to-One with Users (each playlist is created by one user).
+- Many-to-Many with Songs via PlaylistSongs (a playlist can contain multiple songs).
 
-Relationships:
--  One-to-Many with PlayCounts (each song can have multiple play records).
--  Many-to-Many with Playlists via PlaylistSongs (a song can be in multiple playlists).
--  Many-to-Many with Genres via SongGenres (a song can belong to multiple genres).
--  Many-to-Many with MusicLibraries via LibrarySongs.
+**PlaylistSongs** – Associative entity between Playlists and Songs
+Attributes:
+- Foreign Key: songID
+- Foreign Key: playlistID
+- added_date
+- playlist_play_count
+- playlist_last_played_date
+- times_skipped
+**Relationships**:
+- Many-to-One with Songs (each playlist entry references a song).
+- Many-to-One with Playlists (each entry belongs to a playlist).
 
-**PlayerSessions** - Tracks user sessions.
+**Genres** – Stores music genres
+Attributes:
+- Primary Key: genreID
+- name
+- description
+- origin_country
+- era
+**Relationships**:
+- Many-to-Many with Songs via SongGenres (a song can belong to multiple genres).
+- Many-to-Many with Artists via ArtistGenres (an artist can be associated with multiple genres).
 
-Relationships:
-One-to-Many with Users (a user can have multiple sessions).
-Each session tracks a single song being played.
+**SongGenres** – Associative entity between Songs and Genres
+Attributes:
+- Foreign Key: songID
+- Foreign Key: genreID
+- genre_relevance
+- date_assigned
+**Relationships**:
+- Many-to-One with Songs (each entry references a song).
+- Many-to-One with Genres (each entry references a genre).
 
-
-**Playlists** - Represents playlists.
-
-Relationships:
--  One-to-Many with Users (a user can have multiple playlists).
--  Many-to-Many with Songs via PlaylistSongs.
-
-**PlaylistSongs** - Connects Playlists and Songs in a Many-to-Many relationship.
-
-
-**PlayCounts** - Tracks how many times a song has been played.
-
-Relationships:
--  One-to-Many with Songs (a song can have multiple play counts).
--  One-to-Many with TopFiveSongs (ranking popular songs).
-
-
-**TopFiveSongs** - Stores the top five songs from play count.
-
-Relationships:
-- One-to-Many with PlayCounts (each top song is linked to a play count record).
-
-**Genres** - Stores music genres.
-
--  Many-to-Many with Songs via SongGenres.
-
-
-**SongGenres** Connects Songs and Genres in a Many-to-Many relationship.
+**ArtistGenres** – Associative entity between Artists and Genres
+Attributes:
+- Foreign Key: artistID
+- Foreign Key: genreID
+- dominant_genre
+- popularity_score
+**Relationships**:
+- Many-to-One with Artists (each entry references an artist).
+- Many-to-One with Genres (each entry references a genre).
 
 
 ## Data Dictionary 
